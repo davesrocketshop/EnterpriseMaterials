@@ -8,6 +8,9 @@ class Library(models.Model):
     library_read_only = models.BooleanField(default=False)
     library_modified = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+            return self.library_name
+
 class Folder(models.Model):
     folder_name = models.CharField(max_length=512)
     library = models.ForeignKey(Library, on_delete=models.CASCADE)
