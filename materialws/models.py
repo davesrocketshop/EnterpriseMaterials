@@ -9,19 +9,24 @@ class Library(models.Model):
     library_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-            return self.library_name
+        return self.library_name
 
 class Folder(models.Model):
     folder_name = models.CharField(max_length=512)
     library = models.ForeignKey(Library, on_delete=models.CASCADE)
     parent = models.ManyToManyField("self", symmetrical=False, blank=True)
 
+    def __str__(self):
+        if self.parent is not None:
+            return str(self.parent) + '/' + self.folder_name
+        return '/' + self.folder_name
+
 class Model(models.Model):
     class ModelClasses(models.TextChoices):
         PHYSICAL = 'Physical'
         APPEARANCE = 'Appearance'
     model_id = models.UUIDField(primary_key=True)
-    library = models.ForeignKey(Library, on_delete=models.CASCADE)
+    library = models.ForeignKey(Library, related_name='models', on_delete=models.CASCADE)
     folder = models.ForeignKey(Folder, on_delete=models.CASCADE)
     model_type = models.CharField(choices=ModelClasses)
     model_name = models.CharField(max_length=255)
@@ -29,12 +34,15 @@ class Model(models.Model):
     model_description = models.TextField(blank=True)
     model_doi = models.CharField(max_length=255, blank=True)
 
+    def __str__(self):
+        return self.model_id
+
 class ModelInheritance(models.Model):
-    model = models.ForeignKey(Model, on_delete=models.CASCADE)
+    model = models.ForeignKey(Model, related_name='inherited', on_delete=models.CASCADE)
     inherits = models.ManyToManyField("self", symmetrical=False)
 
 class ModelProperty(models.Model):
-    model = models.ForeignKey(Model, on_delete=models.CASCADE)
+    model = models.ForeignKey(Model, related_name='properties', on_delete=models.CASCADE)
     model_property_name = models.CharField(max_length=255)
     model_property_display_name = models.CharField(max_length=255)
     model_property_type = models.CharField(max_length=255)
@@ -43,7 +51,7 @@ class ModelProperty(models.Model):
     model_property_description = models.TextField(blank=True)
 
 class ModelPropertyColumn(models.Model):
-    model_property = models.ForeignKey(ModelProperty, on_delete=models.CASCADE)
+    model_property = models.ForeignKey(ModelProperty, related_name='columns', on_delete=models.CASCADE)
     model_property_name = models.CharField(max_length=255)
     model_property_display_name = models.CharField(max_length=255)
     model_property_type = models.CharField(max_length=255)
@@ -53,7 +61,7 @@ class ModelPropertyColumn(models.Model):
 
 class Material(models.Model):
     material_id = models.UUIDField(primary_key=True)
-    library = models.ForeignKey(Library, on_delete=models.CASCADE)
+    library = models.ForeignKey(Library, related_name='materials', on_delete=models.CASCADE)
     folder = models.ForeignKey(Folder, on_delete=models.CASCADE)
     material_name = models.CharField(max_length=255)
     material_author = models.CharField(max_length=255, blank=True)
@@ -62,6 +70,9 @@ class Material(models.Model):
     material_description = models.TextField(blank=True)
     material_url = models.CharField(max_length=255, blank=True)
     material_reference = models.CharField(max_length=255, blank=True)
+
+    def __str__(self):
+        return self.material_id
 
 class MaterialTag(models.Model):
     material_tag_name = models.CharField(max_length=255)
@@ -75,7 +86,7 @@ class MaterialModels(models.Model):
     model = models.ForeignKey(Model, on_delete=models.CASCADE)
 
 class MaterialPropertyValue(models.Model):
-    material = models.ForeignKey(Material, on_delete=models.CASCADE)
+    material = models.ForeignKey(Material, related_name='property_values', on_delete=models.CASCADE)
     model_property_name = models.CharField(max_length=255)
     model_property_type = models.CharField(max_length=255)
 
