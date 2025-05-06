@@ -2,8 +2,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
-from .models import Library, Model, Material
-from .serializers import LibrarySerializer, ModelListSerializer, ModelSerializer, MaterialListSerializer
+from .models import Library, Model, ModelProperty, Material
+from .serializers import LibrarySerializer, ModelListSerializer, ModelSerializer, ModelPropertySerializer, \
+    MaterialListSerializer
 
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
@@ -181,4 +182,23 @@ class ModelDetailApiView(APIView):
         '''
         model = self.get_object(uuid)
         serializer = ModelSerializer(model)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class ModelPropertyApiView(APIView):
+    # add permission to check if user is authenticated
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_object(self, uuid):
+        try:
+            return ModelProperty.objects.filter(model__model_id=uuid)
+        except ModelProperty.DoesNotExist:
+            raise Http404
+
+    # 1. List all
+    def get(self, request, uuid, format=None):
+        '''
+        List all properties for a model
+        '''
+        properties = self.get_object(uuid)
+        serializer = ModelPropertySerializer(properties, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

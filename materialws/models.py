@@ -41,6 +41,9 @@ class ModelInheritance(models.Model):
     model = models.ForeignKey(Model, related_name='inherited', on_delete=models.CASCADE)
     inherits = models.ManyToManyField("self", symmetrical=False)
 
+    def __str__(self):
+        return self.inherits
+
 class ModelProperty(models.Model):
     model = models.ForeignKey(Model, related_name='properties', on_delete=models.CASCADE)
     model_property_name = models.CharField(max_length=255)

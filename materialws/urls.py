@@ -13,4 +13,5 @@ urlpatterns = [
     path("libraryMaterials/<str:name>/", views.LibraryMaterialsListApiView.as_view()),
     path("model", views.ModelApiView.as_view()),
     path("model/<uuid:uuid>/", views.ModelDetailApiView.as_view()),
+    path("modelProperty/<uuid:uuid>/", views.ModelPropertyApiView.as_view()),
 ]
