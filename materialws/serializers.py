@@ -4,7 +4,7 @@ from .models import Library, Model, ModelProperty, Material
 class LibrarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Library
-        fields = ["library_name", "library_icon", "library_read_only", "library_modified"]
+        fields = ["library_name", "library_icon", "library_read_only"]
 
 class ModelListSerializer(serializers.ModelSerializer):
     library = serializers.StringRelatedField()

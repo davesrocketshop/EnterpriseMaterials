@@ -4,9 +4,8 @@ from django.db import models
 class Library(models.Model):
     # library_id = models.IntegerField(primary_key=True)
     library_name = models.CharField(max_length=512, unique=True)
-    library_icon = models.BinaryField(blank=True)
+    library_icon = models.BinaryField(blank=True, editable=True)
     library_read_only = models.BooleanField(default=False)
-    library_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.library_name
