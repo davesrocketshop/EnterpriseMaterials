@@ -11,13 +11,13 @@ class Library(models.Model):
         return self.library_name
 
 class Folder(models.Model):
-    folder_name = models.CharField(max_length=512)
+    folder_name = models.CharField()
     library = models.ForeignKey(Library, on_delete=models.CASCADE)
-    parent = models.ManyToManyField("self", symmetrical=False, blank=True)
+    # parent = models.ManyToManyField("self", symmetrical=False, blank=True)
 
     def __str__(self):
-        if self.parent is not None:
-            return str(self.parent) + '/' + self.folder_name
+        # if self.parent is not None:
+        #     return str(self.parent) + '/' + self.folder_name
         return '/' + self.folder_name
 
 class Model(models.Model):
@@ -34,14 +34,14 @@ class Model(models.Model):
     model_doi = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
-        return self.model_id
+        return str(self.model_id)
 
 class ModelInheritance(models.Model):
     model = models.ForeignKey(Model, related_name='inherited', on_delete=models.CASCADE)
     inherits = models.ManyToManyField("self", symmetrical=False)
 
     def __str__(self):
-        return self.inherits
+        return str(self.inherits)
 
 class ModelProperty(models.Model):
     model = models.ForeignKey(Model, related_name='properties', on_delete=models.CASCADE)
@@ -74,7 +74,7 @@ class Material(models.Model):
     material_reference = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
-        return self.material_id
+        return str(self.material_id)
 
 class MaterialTag(models.Model):
     material_tag_name = models.CharField(max_length=255)
