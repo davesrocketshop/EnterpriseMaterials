@@ -17,7 +17,7 @@ class ModelListSerializer(serializers.ModelSerializer):
 class ModelSerializer(serializers.ModelSerializer):
     library = serializers.StringRelatedField()
     folder = serializers.StringRelatedField()
-    inherits = serializers.StringRelatedField()
+    # inherits = serializers.StringRelatedField()
 
     class Meta:
         model = Model

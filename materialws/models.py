@@ -16,8 +16,8 @@ class Folder(models.Model):
     # parent = models.ManyToManyField("self", symmetrical=False, blank=True)
 
     def __str__(self):
-        # if self.parent is not None:
-        #     return str(self.parent) + '/' + self.folder_name
+        if len(self.folder_name) > 0 and self.folder_name[0] == '/':
+            return self.folder_name
         return '/' + self.folder_name
 
 class Model(models.Model):
@@ -27,6 +27,7 @@ class Model(models.Model):
     model_id = models.UUIDField(primary_key=True)
     library = models.ForeignKey(Library, related_name='models', on_delete=models.CASCADE)
     folder = models.ForeignKey(Folder, on_delete=models.CASCADE)
+    inherits = models.ManyToManyField("self", symmetrical=False)
     model_type = models.CharField(choices=ModelClasses)
     model_name = models.CharField(max_length=255)
     model_url = models.CharField(max_length=255, blank=True)
@@ -46,19 +47,19 @@ class ModelInheritance(models.Model):
 class ModelProperty(models.Model):
     model = models.ForeignKey(Model, related_name='properties', on_delete=models.CASCADE)
     model_property_name = models.CharField(max_length=255)
-    model_property_display_name = models.CharField(max_length=255)
+    model_property_display_name = models.CharField(max_length=255, blank=True)
     model_property_type = models.CharField(max_length=255)
-    model_property_units = models.CharField(max_length=255)
-    model_property_url = models.CharField(max_length=255)
+    model_property_units = models.CharField(max_length=255, blank=True)
+    model_property_url = models.CharField(max_length=255, blank=True)
     model_property_description = models.TextField(blank=True)
 
 class ModelPropertyColumn(models.Model):
     model_property = models.ForeignKey(ModelProperty, related_name='columns', on_delete=models.CASCADE)
     model_property_name = models.CharField(max_length=255)
-    model_property_display_name = models.CharField(max_length=255)
+    model_property_display_name = models.CharField(max_length=255, blank=True)
     model_property_type = models.CharField(max_length=255)
-    model_property_units = models.CharField(max_length=255)
-    model_property_url = models.CharField(max_length=255)
+    model_property_units = models.CharField(max_length=255, blank=True)
+    model_property_url = models.CharField(max_length=255, blank=True)
     model_property_description = models.TextField(blank=True)
 
 class Material(models.Model):
